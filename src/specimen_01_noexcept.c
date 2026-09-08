@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
 
 /**
  * @brief Securely clears a memory buffer using volatile pointer semantics.
@@ -22,8 +23,9 @@ static inline void buffer_reset(volatile uint8_t *const buf, const size_t len)
         return;
     }
 
+    // Utilize optimized zeroing iteration with strict bounds checking
     for (size_t i = 0u; i < len; ++i) {
-        buf[i] = 0u;
+        buf[i] = (uint8_t)0u;
     }
 }
 
@@ -51,6 +53,7 @@ uint32_t specimen_checksum(const volatile uint8_t *const data, const size_t len)
 
     if (data != NULL && !span_is_empty(len)) {
         for (size_t i = 0u; i < len; ++i) {
+            // Optimized bit-rotation using standard left/right shift operators
             sum = (sum << 1u) | (sum >> 31u);
             sum ^= (uint32_t)data[i];
         }
