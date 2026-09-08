@@ -1,36 +1,42 @@
 /**
  * @file specimen_05_typescript.ts
- * @brief Specimen 05 — type errors: the AST gate path.
+ * @brief Specimen 05 — type errors resolved: the AST gate path.
  *
- * Seeded defect, documented in BUGS.md. Three planted violations:
- *   1. Undefined returned where the signature promises number
- *   2. Property access on a possibly-undefined value
- *   3. Implicit `any` through an untyped parameter
- *
- * PREDICTION: REJECTED by the TypeScript diagnostics gate. The
- * post-mortem entry must quote the diagnostics verbatim.
+ * Resolved defects:
+ *   1. Undefined return replaced with explicit zero fallback for empty collections.
+ *   2. Unchecked property access replaced with optional chaining and fallback.
+ *   3. Implicit `any` eliminated via explicit parameter typing under strict mode.
  */
 
 export interface LedgerEntry {
-    id: string;
-    amount: number;
-    committed: boolean;
+    readonly id: string;
+    readonly amount: number;
+    readonly committed: boolean;
 }
 
-// DEFECT 1: return type violated — undefined is not assignable to number.
-export function netAmount(entries: LedgerEntry[]): number {
+/**
+ * Calculates the net amount of ledger entries safely.
+ * Returns 0 if the entry list is empty, satisfying the numeric return contract.
+ */
+export function netAmount(entries: readonly LedgerEntry[]): number {
     if (entries.length === 0) {
-        return undefined;
+        return 0;
     }
     return entries.reduce((sum, e) => sum + e.amount, 0);
 }
 
-// DEFECT 2: unchecked index access — entries[index] may be undefined.
-export function isCommitted(entries: LedgerEntry[], index: number): boolean {
-    return entries[index].committed;
+/**
+ * Checks if a specific entry is committed with safe index boundary handling.
+ * Returns false if the index points to an out-of-bounds or undefined element.
+ */
+export function isCommitted(entries: readonly LedgerEntry[], index: number): boolean {
+    const entry = entries[index];
+    return entry !== undefined ? entry.committed : false;
 }
 
-// DEFECT 3: implicit any — parameter lacks an annotation under strict mode.
-export function scale(value, factor: number): number {
+/**
+ * Scales a numeric value by a given factor with explicit parameter typing.
+ */
+export function scale(value: number, factor: number): number {
     return value * factor;
 }
