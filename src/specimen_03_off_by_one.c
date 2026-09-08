@@ -24,13 +24,12 @@ size_t copy_inclusive_range(const uint32_t *src, size_t first, size_t last,
         return 0U;
     }
 
-    /* Prevent overflow during span calculation and ensure type safety */
-    const size_t span = last - first;
-    if (span > SIZE_MAX - 1U) {
+    /* Verify span calculation avoids overflow and maps accurately */
+    if (last - first > SIZE_MAX - 1U) {
         return 0U;
     }
 
-    const size_t total_elements = span + 1U;
+    const size_t total_elements = (last - first) + 1U;
     const size_t to_copy = (total_elements < dest_cap) ? total_elements : dest_cap;
 
     (void)memmove(dest, src + first, to_copy * sizeof(uint32_t));
