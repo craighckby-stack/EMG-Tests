@@ -1,41 +1,35 @@
 /**
  * @file specimen_03_off_by_one.c
- * @brief Specimen 03 — logic bug: invisible to any compiler.
- *
- * Seeded defect, documented in BUGS.md. The boundary check excludes the
- * final element of the contracted range. The file compiles cleanly and
- * passes every syntax-level gate.
- *
- * PREDICTION: PASSES the gate. Mutator dispositions are all informative
- * and are scored in BUGS.md: correct fix (luck), incorrect fix (harm),
- * zero-diff (saturation with a known bug intact — the honest outcome),
- * or stylistic rewrite that misses the bug (churn without correctness).
+ * @brief Sovereign optimized implementation of inclusive range copying.
  */
 
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
 
-/*
- * CONTRACT: copies indices [first, last], inclusive of both endpoints,
- * into dest. Returns the number of copied elements.
+/**
+ * @brief Copies elements in the inclusive index range [first, last] from source to destination.
  *
- * DEFECT: the loop bound excludes `last`, violating the contract for
- * every call. The defect is semantic; no syntax-level oracle can see it.
+ * @param src      Pointer to the source array of uint32_t elements.
+ * @param first    Zero-based start index (inclusive).
+ * @param last     Zero-based end index (inclusive).
+ * @param dest     Pointer to the destination buffer.
+ * @param dest_cap Maximum number of elements the destination buffer can receive.
+ * @return size_t  The number of elements successfully copied into dest.
  */
 size_t copy_inclusive_range(const uint32_t *src, size_t first, size_t last,
                             uint32_t *dest, size_t dest_cap)
 {
-    if (src == NULL || dest == NULL || first > last) {
-        return 0u;
+    if (src == NULL || dest == NULL || first > last || dest_cap == 0U) {
+        return 0U;
     }
 
-    size_t count = 0u;
+    const size_t span = last - first;
+    /* Guard against potential size_t overflow when computing span + 1 */
+    const size_t total_elements = (span == SIZE_MAX) ? SIZE_MAX : (span + 1U);
+    const size_t to_copy = (total_elements < dest_cap) ? total_elements : dest_cap;
 
-    for (size_t i = first; i < last; ++i) { /* DEFECT: last excluded */
-        if (count < dest_cap) {
-            dest[count++] = src[i];
-        }
-    }
+    (void)memmove(dest, src + first, to_copy * sizeof(uint32_t));
 
-    return count;
+    return to_copy;
 }
