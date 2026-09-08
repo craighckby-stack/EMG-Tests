@@ -1,73 +1,61 @@
-`````markdown
 # EMG-Tests — Self-Halting Proof
 
-**Validation lab for [EMG Core](https://github.com/craighckby-stack/EMG):
-five seeded defects with known diagnoses. The engine must catch what a
-compiler can catch, learn from what it rejects, and stop when there is
-nothing left to do.**
+> **Validation lab for [EMG Core](https://github.com/craighckby-stack/EMG)**: Five seeded defects with known diagnoses. The engine must catch what a compiler can catch, learn from what it rejects, and halt when system saturation is achieved.
 
-![Status](https://img.shields.io/badge/status-experimental-orange)
-![Type](https://img.shields.io/badge/type-validation%20lab-blue)
-![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey)
+[![Status](https://img.shields.io/badge/status-experimental-orange.svg)](https://github.com/craighckby-stack/EMG)
+[![Type](https://img.shields.io/badge/type-validation%20lab-blue.svg)](https://github.com/craighckby-stack/EMG)
+[![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey.svg)](LICENSE.md)
 
 ---
 
-## The Proof Being Claimed
+## Claims & Falsification Criteria
 
-| # | Claim | Falsified if... |
-|:---:|---|---|
-| 1 | **REJECT** — dialect corruption and type errors fail the gate, with real compiler stderr | Any seeded defect passes that should fail |
-| 2 | **LEARN** — cycle 2 re-proposes zero previously rejected patterns | The engine repeats a documented failure |
-| 3 | **REMEMBER** — editing the lessons file re-arms the engine | Hash invalidation fails to clear the skip list |
-| 4 | **STOP** — saturation reached → Global Halt fires | The loop continues past its own finish line |
+| # | Core Claim | Falsification Condition (`Falsified if...`) |
+| :---: | :--- | :--- |
+| **1** | **REJECT** — Dialect corruption and type errors fail the gate with authentic compiler `stderr` output. | Any seeded defect passes that should fail. |
+| **2** | **LEARN** — Cycle 2 re-proposes zero previously rejected patterns. | The engine repeats a documented failure pattern. |
+| **3** | **REMEMBER** — Editing the post-mortem ledger re-arms the engine skip list via hash invalidation. | Hash invalidation fails to clear the skip list. |
+| **4** | **STOP** — Saturation reached $\rightarrow$ Global Saturation Halt fires automatically. | The evaluation loop continues past its termination criteria. |
 
-> **A tool that cannot stop is not autonomous. This repository is the
-> evidence that this one can.**
+> **Crucial Axiom:** A tool that cannot stop is not autonomous. This repository provides concrete empirical evidence that EMG Core achieves self-halting verification.
 
 ---
 
-## Methodology
+## Verification Methodology
 
-This  follows the same evidence rules as the engine it tests:
+This validation lab follows the exact evidence rules as the engine it tests:
 
-- **Predictions are written before the run** ([`BUGS.md`](BUGS.md)) —
-  every defect is documented with its expected gate verdict
-- **Reality is recorded during the run**
-  ([`docs/POSTMORTEMS.md`](docs/POSTMORTEMS.md)) — verbatim compiler
-  output only; no paraphrase, no self-reported success
-- **The experiment is the diff between the two**
+1. **Pre-Run Predictions** ([`BUGS.md`](BUGS.md)): Every defect is documented with its expected gate verdict prior to execution.
+2. **Execution Ledger** ([`docs/POSTMORTEMS.md`](docs/POSTMORTEMS.md)): Recorded live during execution using verbatim compiler outputs—no paraphrasing or self-reported success.
+3. **Empirical Evaluation**: The experiment is defined strictly by the diff between prediction and reality.
 
-No claim in this repository is accepted without external evidence.
-That standard applies to the engine under test — and to the test
-itself.
+No claim in this repository is accepted without external, verifiable evidence. This standard applies equally to the engine under test and the evaluation suite itself.
 
 ---
 
 ## The Specimens
 
-| Specimen | Defect class | Predicted gate verdict |
-|---|---|---|
-| [`specimen_01_noexcept.c`](src/specimen_01_noexcept.c) | C++ keyword injected into C — dialect corruption | ❌ Reject (compile error) |
-| [`specimen_02_todo_success.c`](src/specimen_02_todo_success.c) | Success returned from an unimplemented operation | ⚠️ Expected **pass** — documents the oracle's known limit |
-| [`specimen_03_off_by_one.c`](src/specimen_03_off_by_one.c) | Logic bug — invisible to any compiler | ⚠️ Expected pass |
-| [`specimen_04_memory_leak.c`](src/specimen_04_memory_leak.c) | Resource leak — invisible to syntax-only checks | ⚠️ Expected pass |
-| [`specimen_05_typescript.ts`](src/specimen_05_typescript.ts) | Type errors — the AST gate path | ❌ Reject (diagnostics) |
+| Specimen File | Defect Class | Predicted Gate Verdict |
+| :--- | :--- | :--- |
+| [`src/specimen_01_noexcept.c`](src/specimen_01_noexcept.c) | C++ keyword injected into C — dialect corruption | ❌ **Reject** (Compile Error) |
+| [`src/specimen_02_todo_success.c`](src/specimen_02_todo_success.c) | Success status returned from an unimplemented operation | ⚠️ **Expected Pass** (Documents oracle limit) |
+| [`src/specimen_03_off_by_one.c`](src/specimen_03_off_by_one.c) | Logic boundary error — invisible to syntax checkers | ⚠️ **Expected Pass** |
+| [`src/specimen_04_memory_leak.c`](src/specimen_04_memory_leak.c) | Resource leak — invisible to static syntax checks | ⚠️ **Expected Pass** |
+| [`src/specimen_05_typescript.ts`](src/specimen_05_typescript.ts) | Type errors — target for the AST gate path | ❌ **Reject** (Diagnostics Failure) |
 
-Specimens 2–4 are deliberately placed to **map the boundary of machine
-verification**: the defects a compiler cannot see are as important as
-the ones it can.
+*Note: Specimens 2–4 are deliberately designed to **map the boundaries of machine verification**: identifying defects a compiler cannot detect is just as critical as identifying those it can.*
 
 ---
 
 ## Repository Structure
 
-```
+```text
 EMG-Tests/
-├── README.md                  ← this document
-├── BUGS.md                    ← answer key: seeded defects + predictions
-├── LICENSE.md
+├── README.md                  # Main overview and verification claims
+├── BUGS.md                    # Answer key: Seeded defects and predictions
+├── LICENSE.md                 # CC BY-NC-SA 4.0 license terms
 ├── docs/
-│   └── POSTMORTEMS.md         ← empty at run start; filled by the engine, evidence only
+│   └── POSTMORTEMS.md         # Verbatim engine execution log (populated during run)
 └── src/
     ├── specimen_01_noexcept.c
     ├── specimen_02_todo_success.c
@@ -80,131 +68,103 @@ EMG-Tests/
 
 ## Run Protocol
 
-| Step | Action | Proves |
-|:---:|---|---|
-| 1 | Run EMG Core against this repository — cycle 1 | Gate verdicts vs. predictions |
-| 2 | Stop. Read the post-mortem ledger | Evidence quality: verbatim stderr or nothing |
-| 3 | Run cycle 2 | **The learning claim** — zero re-proposals |
-| 4 | Hand-edit the ledger (add any line) | Hash invalidation re-arms the engine |
-| 5 | Run to completion | Global Saturation Halt fires |
-| 6 | Score [`BUGS.md`](BUGS.md) checklist against reality | The diff is the finding |
+| Step | Action | Verification Target |
+| :---: | :--- | :--- |
+| **1** | Execute EMG Core against this repository (Cycle 1). | Gate verdicts vs. baseline predictions in [`BUGS.md`](BUGS.md). |
+| **2** | Inspect the generated post-mortem ledger (`docs/POSTMORTEMS.md`). | Ensure evidence contains verbatim `stderr` output. |
+| **3** | Execute Cycle 2. | Verify the **learning claim**: zero re-proposals of rejected patterns. |
+| **4** | Manually edit the ledger (modify any line). | Confirm hash invalidation re-arms the skip list. |
+| **5** | Run execution to completion. | Verify that the Global Saturation Halt fires as expected. |
+| **6** | Score [`BUGS.md`](BUGS.md) against experimental reality. | Analyze experimental diff and document findings. |
 
-Every outcome is informative, including failure of the engine's core
-claims — documented with the same rigor as success.
+Every outcome is informative: failures in the engine's core claims are documented with the exact same rigor as successes.
 
 ---
 
-## Related
+## Related Projects
 
-- **[EMG Core](https://github.com/craighckby-stack/EMG)** — the engine under test
-- **[PKM](https://github.com/craighckby-stack/PKM)** — origin project; its post-mortem
-  ledger is the reason this evidence system exists
+- **[EMG Core](https://github.com/craighckby-stack/EMG)** — The self-halting code optimization engine under test.
+- **[PKM](https://github.com/craighckby-stack/PKM)** — Originating project whose post-mortem ledger design informed this evidence framework.
 
 ---
 
 ## License
 
-CC BY-NC-SA 4.0 — see [`LICENSE.md`](LICENSE.md).
-`````
+This project is licensed under **CC BY-NC-SA 4.0**. See [`LICENSE.md`](LICENSE.md) for details.
 
 ---
 
-`````markdown
 # BUGS.md — Answer Key: Seeded Defects & Predictions
 
-**This file was written before the run.** Every defect below is
-deliberately planted, with its predicted gate verdict. The engine's
-ledger (`docs/POSTMORTEMS.md`) records what actually happened. The diff
-between prediction and reality is the experiment.
+> **Note:** This file was authored before engine execution. Every defect detailed below was intentionally seeded alongside its predicted gate verdict. The actual execution ledger is logged at [`docs/POSTMORTEMS.md`](docs/POSTMORTEMS.md).
 
-## The Test's Core Claim (Falsifiable)
+## Core Verification Claim (Falsifiable)
 
-> After cycle 1 writes failure post-mortems with verbatim compiler
-> evidence, cycle 2 must not re-propose any rejected pattern.
+> After Cycle 1 writes failure post-mortems backed by verbatim compiler evidence, Cycle 2 must not re-propose any previously rejected mutation pattern.
 
-If cycle 2 repeats a documented failure, the memory layer does not
-learn — and that finding is recorded here like every other.
+If Cycle 2 repeats a documented failure, the memory layer has failed to learn—a outcome that will be recorded here with complete transparency.
 
-## The Specimens
+## Specimen Matrix
 
-| # | File | Defect | Predicted verdict | Predicted post-mortem? |
-|:---:|---|---|---|:---:|
-| 1 | `specimen_01_noexcept.c` | C++ `noexcept` keyword in a C translation unit | ❌ REJECT — syntax error, real stderr | ✅ Yes |
-| 2 | `specimen_02_todo_success.c` | `return SUCCESS` immediately after a TODO | ⚠️ **PASS** — valid C; documents oracle blind spot | ❌ No — **this is the finding** |
-| 3 | `specimen_03_off_by_one.c` | Loop boundary excludes the contracted final element | ⚠️ **PASS** — compiles clean | ❌ No |
-| 4 | `specimen_04_memory_leak.c` | Allocation leaked on an error path | ⚠️ **PASS** — invisible to syntax-only checks | ❌ No |
-| 5 | `specimen_05_typescript.ts` | Type errors: wrong return type, unchecked access, implicit any | ❌ REJECT — AST diagnostics | ✅ Yes |
+| # | Specimen File | Defect Description | Predicted Verdict | Predicted Post-Mortem |
+| :---: | :--- | :--- | :--- | :---: |
+| **1** | `specimen_01_noexcept.c` | C++ `noexcept` keyword inside C translation unit | ❌ **REJECT** — Syntax error (`stderr`) | ✅ Yes |
+| **2** | `specimen_02_todo_success.c` | Immediate `return SUCCESS` following `TODO` | ⚠️ **PASS** — Valid C (oracle blind spot) | ❌ No |
+| **3** | `specimen_03_off_by_one.c` | Loop boundary condition excludes final array element | ⚠️ **PASS** — Compiles cleanly | ❌ No |
+| **4** | `specimen_04_memory_leak.c` | Allocation leaked along error exit path | ⚠️ **PASS** — Invisible to syntax checks | ❌ No |
+| **5** | `specimen_05_typescript.ts` | Type errors: invalid return type, unchecked access, implicit `any` | ❌ **REJECT** — AST diagnostic errors | ✅ Yes |
 
-## Predicted Boundary of the Gate
+## Predicted Gate Boundaries
 
-| Caught by the current oracle | NOT caught by the current oracle |
-|---|---|
-| Syntax errors | Logic bugs (specimen 3) |
-| Type errors — C and TypeScript | Resource leaks (specimen 4) |
-| Undeclared identifiers | Semantic lies (specimen 2) |
-| C++ keywords in C files (specimen 1) | Dead code / unreachable paths |
+| Detected by Current Oracle | NOT Detected by Current Oracle |
+| :--- | :--- |
+| Syntax errors | Logic bugs (e.g., Specimen 3) |
+| Type errors (C and TypeScript) | Resource leaks (e.g., Specimen 4) |
+| Undeclared identifiers | Semantic inconsistencies (e.g., Specimen 2) |
+| C++ keywords in C source files (Specimen 1) | Unreachable code / dead paths |
 
-**Hypothesis:** the gate catches exactly what a compiler catches — no
-more. If the mutator "fixes" anything in the right-hand column, the
-result must be scored honestly: a correct fix is luck the gate did not
-contribute to; an incorrect fix is a mutation breaking code the gate
-waved through.
+**Hypothesis:** The gate catches exactly what a compiler catches—no more and no less. If the mutator fixes an issue in the right-hand column, it must be evaluated objectively: a successful fix represents unguided luck rather than gate enforcement; an unsuccessful fix is a mutation that corrupted code passed by the gate.
 
-## Scoring — Completed After the Run
+## Post-Run Scoring Checklist
 
-- [ ] Cycle 1 rejections match predictions
-- [ ] Every ledger entry contains verbatim compiler/diagnostic output
-- [ ] **Cycle 2 re-proposed zero rejected patterns** ← the learning claim
-- [ ] Manual ledger edit re-armed the skip list (hash invalidation)
-- [ ] Global Saturation Halt fired
-- [ ] Every "fixed" claim corresponds to a passing gate result
+- [ ] Cycle 1 rejections strictly match predictions.
+- [ ] Every ledger entry contains verbatim compiler/diagnostic output.
+- [ ] **Cycle 2 re-proposed zero rejected patterns** (Learning Claim).
+- [ ] Manual ledger modification successfully re-armed the skip list via hash invalidation.
+- [ ] Global Saturation Halt fired automatically upon task completion.
+- [ ] Every "fixed" status corresponds to a passing gate result.
 
-## Disposition Notes (fill in per specimen after the run)
+## Disposition Ledger (Post-Run Evaluation)
 
-| Specimen | Gate verdict (actual) | Post-mortem written (actual) | Mutator disposition | Scored against prediction |
-|:---:|---|---|---|:---:|
-| 1 | | | | ☐ |
-| 2 | | | | ☐ |
-| 3 | | | | ☐ |
-| 4 | | | | ☐ |
-| 5 | | | | ☐ |
-`````
+| Specimen | Gate Verdict (Actual) | Post-Mortem Written (Actual) | Mutator Disposition | Scored Against Prediction |
+| :---: | :---: | :---: | :---: | :---: |
+| **1** | | | | [ ] |
+| **2** | | | | [ ] |
+| **3** | | | | [ ] |
+| **4** | | | | [ ] |
+| **5** | | | | [ ] |
 
 ---
 
-`````markdown
 # License
 
-This work is licensed under the
-**Creative Commons Attribution-NonCommercial-ShareAlike 4.0
-International License (CC BY-NC-SA 4.0)**.
+This work is licensed under the **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0)**.
 
 Copyright (c) 2026 Craighckby
 
-## You are free to:
+## Standard Permissions
 
-- **Share** — copy and redistribute the material in any medium or format
-- **Adapt** — remix, transform, and build upon the material
+- **Share** — Copy and redistribute the material in any medium or format.
+- **Adapt** — Remix, transform, and build upon the material.
 
-## Under the following terms:
+## License Terms
 
-- **Attribution** — You must give appropriate credit, provide a link to
-  the license, and indicate if changes were made.
-- **NonCommercial** — You may not use the material for commercial
-  purposes. Commercial use requires separate permission from the
-  copyright holder.
-- **ShareAlike** — If you remix, transform, or build upon the material,
-  you must distribute your contributions under the same license as the
-  original.
-- **No additional restrictions** — You may not apply legal terms or
-  technological measures that legally restrict others from doing
-  anything the license permits.
+- **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+- **NonCommercial** — You may not use the material for commercial purposes without explicit permission from the copyright holder.
+- **ShareAlike** — If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.
+- **No Additional Restrictions** — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
 
-## Full legal code
+## References
 
-https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
-
-## Human-readable summary
-
-https://creativecommons.org/licenses/by-nc-sa/4.0/
-
+- **Full Legal Code:** [CC BY-NC-SA 4.0 Legal Code](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode)
+- **Human-Readable Summary:** [CC BY-NC-SA 4.0 Commons Deed](https://creativecommons.org/licenses/by-nc-sa/4.0/)
