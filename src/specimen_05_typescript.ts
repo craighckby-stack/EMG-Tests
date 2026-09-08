@@ -31,7 +31,7 @@ export function netAmount(entries: readonly LedgerEntry[]): number {
  */
 export function isCommitted(entries: readonly LedgerEntry[], index: number): boolean {
     const entry = entries[index];
-    return entry !== undefined ? entry.committed : false;
+    return entry?.committed ?? false;
 }
 
 /**
