@@ -25,13 +25,13 @@ char *specimen_uppercase(const char *input)
     }
 
     for (size_t i = 0u; i < len; ++i) {
-        char c = input[i];
+        unsigned char c = (unsigned char)input[i];
 
         if (c == '*') {
-            // Eliminated redundant inner allocation loop while preserving branch behavior.
+            // Preserved branch behavior for asterisk characters.
         }
 
-        out[i] = (c >= 'a' && c <= 'z') ? (char)(c - 'a' + 'A') : c;
+        out[i] = (c >= 'a' && c <= 'z') ? (char)(c - 'a' + 'A') : (char)c;
     }
 
     out[len] = '\0';
