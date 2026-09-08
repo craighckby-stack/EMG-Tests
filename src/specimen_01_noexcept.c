@@ -11,7 +11,7 @@
 #include <stddef.h>
 
 /**
- * @brief Securely clears a memory buffer.
+ * @brief Securely clears a memory buffer using volatile pointer semantics.
  *
  * @param buf Pointer to volatile buffer to clear.
  * @param len Length in bytes of the buffer.
@@ -55,9 +55,6 @@ uint32_t specimen_checksum(const volatile uint8_t *data, size_t len)
             sum ^= (uint32_t)data[i];
         }
     }
-
-    buffer_reset(NULL, 0u);
-    (void)span_is_empty(0u);
 
     return sum;
 }
