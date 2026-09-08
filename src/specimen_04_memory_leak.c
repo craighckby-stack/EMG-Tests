@@ -11,17 +11,16 @@
  * lifetimes. Documented as the gate's boundary, not a test failure.
  */
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-/*
- * CONTRACT: returns a freshly allocated uppercase copy of `input`.
- * Caller owns the returned buffer; NULL on allocation failure.
- *
- * DEFECT: when the auxiliary allocation fails, the first buffer leaks —
- * the early return bypasses cleanup, and the caller never receives the
- * pointer to free.
+/**
+ * @brief Returns a freshly allocated uppercase copy of `input`.
+ * 
+ * @param input Null-terminated string to convert.
+ * @return char* Allocated uppercase string, or NULL on allocation failure.
  */
 char *specimen_uppercase(const char *input)
 {
@@ -42,9 +41,11 @@ char *specimen_uppercase(const char *input)
         if (c == '*') {
             char *scratch = malloc(len);
             if (scratch == NULL) {
-                return NULL; /* DEFECT: `out` is leaked on this path */
+                free(out);
+                return NULL; /* FIXED: Prevent memory leak of `out` on allocation failure */
             }
             memset(scratch, 0, len);
+            free(scratch);
         }
 
         out[i] = (c >= 'a' && c <= 'z') ? (char)(c - 'a' + 'A') : c;
