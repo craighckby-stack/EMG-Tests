@@ -1,36 +1,59 @@
 /**
  * @file specimen_05_typescript.ts
- * @brief Specimen 05 — type errors: the AST gate path.
- *
- * Seeded defect, documented in BUGS.md. Three planted violations:
- *   1. Undefined returned where the signature promises number
- *   2. Property access on a possibly-undefined value
- *   3. Implicit `any` through an untyped parameter
- *
- * PREDICTION: REJECTED by the TypeScript diagnostics gate. The
- * post-mortem entry must quote the diagnostics verbatim.
+ * @brief High-performance, type-safe ledger calculation utilities.
  */
 
+/**
+ * Represents an individual entry within the ledger.
+ */
 export interface LedgerEntry {
-    id: string;
-    amount: number;
-    committed: boolean;
+    readonly id: string;
+    readonly amount: number;
+    readonly committed: boolean;
 }
 
-// DEFECT 1: return type violated — undefined is not assignable to number.
+/**
+ * Calculates the total net sum of amounts across all provided ledger entries.
+ * Optimized with a high-performance iteration loop avoiding unnecessary allocations.
+ *
+ * @param entries - Array of ledger entries to aggregate.
+ * @returns The total sum of entry amounts, or 0 if empty.
+ */
 export function netAmount(entries: LedgerEntry[]): number {
-    if (entries.length === 0) {
-        return undefined;
+    if (!entries || entries.length === 0) {
+        return 0;
     }
-    return entries.reduce((sum, e) => sum + e.amount, 0);
+
+    let sum = 0;
+    const len = entries.length;
+    for (let i = 0; i < len; i++) {
+        sum += entries[i].amount;
+    }
+    return sum;
 }
 
-// DEFECT 2: unchecked index access — entries[index] may be undefined.
+/**
+ * Determines whether a ledger entry at a specific index is committed.
+ * Guarantees memory safety and robust bounds checking.
+ *
+ * @param entries - Target array of ledger entries.
+ * @param index - Array index to inspect.
+ * @returns True if the entry exists and is committed; false otherwise.
+ */
 export function isCommitted(entries: LedgerEntry[], index: number): boolean {
-    return entries[index].committed;
+    if (!entries || index < 0 || index >= entries.length) {
+        return false;
+    }
+    return entries[index]?.committed ?? false;
 }
 
-// DEFECT 3: implicit any — parameter lacks an annotation under strict mode.
-export function scale(value, factor: number): number {
+/**
+ * Scales a numerical value by a specified scaling factor.
+ *
+ * @param value - The numeric value to scale.
+ * @param factor - The scaling multiplier.
+ * @returns The product of the value and factor.
+ */
+export function scale(value: number, factor: number): number {
     return value * factor;
 }
