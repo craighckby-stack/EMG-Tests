@@ -1,6 +1,6 @@
 # EMG-Tests — Self-Halting Proof
 
-**Validation laboratory for [EMG Core](https://github.com/craighckby-stack/EMG): a benchmark of five seeded defects with deterministic diagnoses. The engine must intercept what a compiler or AST analyzer can detect, retain memory of what it rejects, and halt autonomously when saturation is achieved.**
+**Validation laboratory for [EMG Core](https://github.com/craighckby-stack/EMG): A benchmark suite of five seeded defects with deterministic diagnoses. The engine must intercept errors detectable by compilers or AST analyzers, maintain memory of rejected mutation candidates, and halt autonomously upon state space saturation.**
 
 [![Status](https://img.shields.io/badge/status-experimental-orange.svg)](https://github.com/craighckby-stack/EMG)
 [![Type](https://img.shields.io/badge/type-validation%20lab-blue.svg)](https://github.com/craighckby-stack/EMG)
@@ -8,7 +8,7 @@
 
 ---
 
-## 1. The Core Falsification Claims
+## 1. Core Falsification Claims
 
 | Claim ID | Property | Invariant Under Test | Falsified If |
 | :---: | :--- | :--- | :--- |
@@ -17,17 +17,17 @@
 | **03** | **REMEMBER** | Manual modifications to the post-mortem ledger invalidate hashes and re-arm the engine. | Hash invalidation fails to clear or update the skip list. |
 | **04** | **STOP** | State space exhaustion triggers a deterministic **Global Saturation Halt**. | The mutation loop runs indefinitely or overshoots saturation. |
 
-> **Autonomous Mandate:** A system that cannot deterministically halt is not autonomous. This repository provides reproducible empirical evidence that EMG Core adheres to strict convergence boundaries.
+> **Autonomous Mandate:** A system that cannot deterministically halt is not truly autonomous. This repository provides reproducible empirical evidence that EMG Core adheres to strict convergence boundaries.
 
 ---
 
 ## 2. Experimental Methodology
 
-This validation suite enforces the same empirical evidence standards governing the engine under test:
+This validation suite enforces the empirical evidence standards governing the engine under test:
 
-- **Pre-Declared Predictions ([`BUGS.md`](BUGS.md)):** Every defect is cataloged prior to execution along with its expected gate verdict.
-- **Verbatim Evidence Ledger ([`docs/POSTMORTEMS.md`](docs/POSTMORTEMS.md)):** The engine records raw compiler stderr and diagnostic output—free from paraphrasing or self-reported status claims.
-- **Differential Verification:** Scientific validity is evaluated strictly as the diff between pre-run predictions and runtime reality.
+- **Pre-Declared Predictions ([`BUGS.md`](BUGS.md)):** Every defect is cataloged prior to execution alongside its expected verification gate verdict.
+- **Verbatim Evidence Ledger ([`docs/POSTMORTEMS.md`](docs/POSTMORTEMS.md)):** The engine records raw compiler `stderr` and diagnostic output—devoid of paraphrasing or unverified status claims.
+- **Differential Verification:** Scientific validity is evaluated strictly as the differential between pre-run predictions and runtime reality.
 
 No operational claim is accepted without reproducible external evidence.
 
@@ -68,7 +68,7 @@ EMG-Tests/
 
 ## 5. Execution Protocol
 
-```
+```text
 +-----------------------------------------------------------------------------+
 |                          EXECUTION RUN PROTOCOL                             |
 +-----------------------------------------------------------------------------+
@@ -94,7 +94,7 @@ EMG-Tests/
 
 ## 6. Oracle Capabilities & Boundary Limits
 
-```
+```text
 +------------------------------------+------------------------------------+
 |  INTERCEPTED BY SYNTAX/AST GATES   |     OUTSIDE THE CURRENT ORACLE     |
 +------------------------------------+------------------------------------+
@@ -153,7 +153,7 @@ Copyright (c) 2026 Craighckby
 - **Adapt:** Remix, transform, and build upon the material.
 - **Attribution:** Provide appropriate credit, include a link to the license, and declare if changes were made.
 - **NonCommercial:** You may not use the material for commercial purposes without explicit permission.
-- **ShareAlike:** Distributed derivatives must carry the identical license terms.
-- **No Additional Restrictions:** No legal or technical constraints may be applied that restrict what the license grants.
+- **ShareAlike:** Distributed derivatives must carry identical license terms.
+- **No Additional Restrictions:** No legal or technical constraints may be applied that restrict rights granted under the license.
 
 For complete terms, consult the [CC BY-NC-SA 4.0 Legal Code](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode) or the [Human-Readable Summary](https://creativecommons.org/licenses/by-nc-sa/4.0/).
