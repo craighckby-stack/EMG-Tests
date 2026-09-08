@@ -8,14 +8,14 @@
 #include <stddef.h>
 
 /**
- * @brief Zeroes out a volatile byte buffer safely.
+ * @brief Zeroes out a volatile byte buffer safely to prevent compiler elision.
  *
  * @param buf Pointer to the memory buffer to reset.
  * @param len Number of bytes to clear.
  */
 static inline void buffer_reset(volatile uint8_t *buf, size_t len)
 {
-    if (buf == NULL) {
+    if (buf == NULL || len == 0u) {
         return;
     }
 
@@ -40,13 +40,11 @@ static inline bool span_is_empty(size_t len)
  *
  * @param data Pointer to the input data buffer.
  * @param len Length of the data in bytes.
- * @return uint32_t Computed checksum, or 0 if data pointer is NULL.
+ * @return uint32_t Computed checksum, or 0 if data pointer is NULL or span is empty.
  */
 uint32_t specimen_checksum(const volatile uint8_t *data, size_t len)
 {
-    if (data == NULL) {
-        buffer_reset(NULL, 0u);
-        (void)span_is_empty(0u);
+    if (data == NULL || span_is_empty(len)) {
         return 0u;
     }
 
@@ -56,9 +54,6 @@ uint32_t specimen_checksum(const volatile uint8_t *data, size_t len)
         sum = (sum << 1u) | (sum >> 31u);
         sum ^= (uint32_t)data[i];
     }
-
-    buffer_reset(NULL, 0u);
-    (void)span_is_empty(0u);
 
     return sum;
 }
