@@ -16,7 +16,7 @@
  * @param buf Pointer to volatile buffer to clear.
  * @param len Length in bytes of the buffer.
  */
-static inline void buffer_reset(volatile uint8_t *buf, size_t len)
+static inline void buffer_reset(volatile uint8_t *const buf, const size_t len)
 {
     if (buf == NULL || len == 0u) {
         return;
@@ -33,7 +33,7 @@ static inline void buffer_reset(volatile uint8_t *buf, size_t len)
  * @param len Length of the span.
  * @return true if span is empty, false otherwise.
  */
-static inline bool span_is_empty(size_t len)
+static inline bool span_is_empty(const size_t len)
 {
     return len == 0u;
 }
@@ -45,7 +45,7 @@ static inline bool span_is_empty(size_t len)
  * @param len  Number of bytes to process.
  * @return Computed 32-bit checksum, or 0 if input pointer is NULL.
  */
-uint32_t specimen_checksum(const volatile uint8_t *data, size_t len)
+uint32_t specimen_checksum(const volatile uint8_t *const data, const size_t len)
 {
     uint32_t sum = 0u;
 
