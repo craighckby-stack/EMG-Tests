@@ -1,49 +1,68 @@
 # BUGS.md — Answer Key: Seeded Defects & Predictions
 
-**This file was written before the run.** Every defect below is deliberately planted, with its predicted gate verdict. The engine's ledger (`docs/POSTMORTEMS.md`) records what actually happened. The diff between prediction and reality is the experiment.
+> **Note:** This document was authored prior to execution. Every defect detailed below was deliberately planted alongside its predicted gate verdict. The engine's execution ledger (`docs/POSTMORTEMS.md`) captures actual runtime results. The delta between predicted outcomes and actual execution constitutes the primary experiment.
 
-## The Test's Core Claim (Falsifiable)
+---
 
-> After cycle 1 writes failure post-mortems with verbatim compiler evidence, cycle 2 must not re-propose any rejected pattern.
+## Core Falsifiable Claim
 
-If cycle 2 repeats a documented failure, the memory layer does not learn — and that finding is recorded here like every other.
+> After Cycle 1 records failure post-mortems containing verbatim compiler evidence, Cycle 2 must not re-propose any previously rejected pattern.
 
-## The Specimens
+If Cycle 2 re-proposes a documented failure mode, the memory layer has failed to learn—a finding that will be systematically recorded alongside all other experiment outcomes.
 
-| # | File | Defect | Predicted verdict | Predicted post-mortem? |
-|:---:|---|---|---|:---:|
-| 1 | `specimen_01_noexcept.c` | C++ `noexcept` keyword in a C translation unit | ❌ REJECT — syntax error, real stderr | ✅ Yes |
-| 2 | `specimen_02_todo_success.c` | `return SUCCESS` immediately after a TODO | ⚠️ **PASS** — valid C; documents oracle blind spot | ❌ No — **this is the finding** |
-| 3 | `specimen_03_off_by_one.c` | Loop boundary excludes the contracted final element | ⚠️ **PASS** — compiles clean | ❌ No |
-| 4 | `specimen_04_memory_leak.c` | Allocation leaked on an error path | ⚠️ **PASS** — invisible to syntax-only checks | ❌ No |
-| 5 | `specimen_05_typescript.ts` | Type errors: wrong return type, unchecked access, implicit any | ❌ REJECT — AST diagnostics | ✅ Yes |
+---
 
-## Predicted Boundary of the Gate
+## Seeded Specimens
 
-| Caught by the current oracle | NOT caught by the current oracle |
-|---|---|
-| Syntax errors | Logic bugs (specimen 3) |
-| Type errors — C and TypeScript | Resource leaks (specimen 4) |
-| Undeclared identifiers | Semantic lies (specimen 2) |
-| C++ keywords in C files (specimen 1) | Dead code / unreachable paths |
+| # | Specimen File | Seeded Defect Description | Predicted Gate Verdict | Predicted Post-Mortem Written? |
+| :---: | :--- | :--- | :--- | :---: |
+| **1** | `specimen_01_noexcept.c` | C++ `noexcept` keyword inside a standard C translation unit | ❌ **REJECT** — Syntax error (`stderr` generated) | ✅ Yes |
+| **2** | `specimen_02_todo_success.c` | `return SUCCESS` immediately following a `TODO` comment | ⚠️ **PASS** — Valid C syntax; highlights oracle blind spot | ❌ No — *This is the core finding* |
+| **3** | `specimen_03_off_by_one.c` | Loop boundary condition excludes the contracted final element | ⚠️ **PASS** — Compiles cleanly without warnings | ❌ No |
+| **4** | `specimen_04_memory_leak.c` | Dynamic memory allocation leaked along an error-handling path | ⚠️ **PASS** — Invisible to syntax-only verification | ❌ No |
+| **5** | `specimen_05_typescript.ts` | Type errors: mismatched return type, unchecked access, implicit `any` | ❌ **REJECT** — AST diagnostic failures | ✅ Yes |
 
-**Hypothesis:** the gate catches exactly what a compiler catches — no more. If the mutator "fixes" anything in the right-hand column, the result must be scored honestly: a correct fix is luck the gate did not contribute to; an incorrect fix is a mutation breaking code the gate waved through.
+---
 
-## Scoring — Completed After the Run
+## Predicted Oracle Boundary
 
-- [ ] Cycle 1 rejections match predictions
-- [ ] Every ledger entry contains verbatim compiler/diagnostic output
-- [ ] **Cycle 2 re-proposed zero rejected patterns** ← the learning claim
-- [ ] Manual ledger edit re-armed the skip list (hash invalidation)
-- [ ] Global Saturation Halt fired
-- [ ] Every "fixed" claim corresponds to a passing gate result
+| Caught by Current Oracle | NOT Caught by Current Oracle |
+| :--- | :--- |
+| Syntax errors | Logic bugs (e.g., `specimen_03_off_by_one.c`) |
+| Type errors (C and TypeScript) | Resource and memory leaks (e.g., `specimen_04_memory_leak.c`) |
+| Undeclared identifiers | Semantic incongruities (e.g., `specimen_02_todo_success.c`) |
+| C++ reserved keywords in C source (e.g., `specimen_01_noexcept.c`) | Dead code and unreachable execution paths |
 
-## Disposition Notes (fill in per specimen after the run)
+### Underlying Hypothesis
 
-| Specimen | Gate verdict (actual) | Post-mortem written (actual) | Mutator disposition | Scored against prediction |
-|:---:|---|---|---|:---:|
-| 1 | | | | ☐ |
-| 2 | | | | ☐ |
-| 3 | | | | ☐ |
-| 4 | | | | ☐ |
-| 5 | | | | ☐ |
+The verification gate detects precisely what a standard compiler/parser detects—no more, no less. If the mutator purports to "fix" any defect listed in the right-hand column, the outcome must be evaluated strictly:
+
+* **Correct fix:** Attributable to stochastic luck rather than gate validation.
+* **Incorrect fix:** A mutation that breaks functional logic while passing through an uncritical gate.
+
+---
+
+## Scoring Checklist
+
+*Completed post-execution:*
+
+- [ ] Cycle 1 rejections match predicted gate verdicts.
+- [ ] Every ledger entry includes verbatim compiler/diagnostic output.
+- [ ] **Cycle 2 re-proposed zero rejected patterns** *(Core memory retention claim)*.
+- [ ] Manual ledger editing correctly re-armed the skip list (via hash invalidation).
+- [ ] Global Saturation Halt fired as expected.
+- [ ] Every "fixed" claim corresponds directly to a passing gate verdict.
+
+---
+
+## Post-Run Disposition Notes
+
+*To be completed per specimen following test execution:*
+
+| Specimen | Actual Gate Verdict | Actual Post-Mortem Logged | Mutator Disposition | Scored Against Prediction |
+| :---: | :--- | :--- | :--- | :---: |
+| **1** | | | | [ ] |
+| **2** | | | | [ ] |
+| **3** | | | | [ ] |
+| **4** | | | | [ ] |
+| **5** | | | | [ ] |
