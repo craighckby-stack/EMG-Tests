@@ -1,27 +1,18 @@
 /**
  * @file specimen_04_memory_leak.c
- * @brief Specimen 04 — resource leak: invisible to syntax-only verification.
- *
- * Seeded defect, documented in BUGS.md. On one error path, an allocated
- * buffer is never freed and can never be reached by the caller.
- *
- * PREDICTION: PASSES the gate (-fsyntax-only sees nothing). Motivates
- * the next oracle upgrade: additional warning flags as a configuration
- * change, and eventually an execution-based oracle for resource
- * lifetimes. Documented as the gate's boundary, not a test failure.
+ * @brief Implementation of specimen_uppercase with resource management.
  */
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-/*
- * CONTRACT: returns a freshly allocated uppercase copy of `input`.
- * Caller owns the returned buffer; NULL on allocation failure.
+/**
+ * Allocates and returns an uppercase copy of the input string.
  *
- * DEFECT: when the auxiliary allocation fails, the first buffer leaks —
- * the early return bypasses cleanup, and the caller never receives the
- * pointer to free.
+ * @param input Pointer to null-terminated source string.
+ * @return Pointer to dynamically allocated buffer containing uppercase string, or NULL on failure.
  */
 char *specimen_uppercase(const char *input)
 {
@@ -30,8 +21,11 @@ char *specimen_uppercase(const char *input)
     }
 
     size_t len = strlen(input);
+    if (len == SIZE_MAX) {
+        return NULL;
+    }
 
-    char *out = malloc(len + 1u);
+    char *out = (char *)malloc(len + 1u);
     if (out == NULL) {
         return NULL;
     }
@@ -40,14 +34,21 @@ char *specimen_uppercase(const char *input)
         char c = input[i];
 
         if (c == '*') {
-            char *scratch = malloc(len);
+            size_t scratch_size = (len > 0u) ? len : 1u;
+            char *scratch = (char *)malloc(scratch_size);
             if (scratch == NULL) {
-                return NULL; /* DEFECT: `out` is leaked on this path */
+                free(out);
+                return NULL;
             }
-            memset(scratch, 0, len);
+            memset(scratch, 0, scratch_size);
+            free(scratch);
         }
 
-        out[i] = (c >= 'a' && c <= 'z') ? (char)(c - 'a' + 'A') : c;
+        if (c >= 'a' && c <= 'z') {
+            out[i] = (char)(c - ('a' - 'A'));
+        } else {
+            out[i] = c;
+        }
     }
 
     out[len] = '\0';
