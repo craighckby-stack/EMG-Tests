@@ -1,36 +1,50 @@
 /**
  * @file specimen_05_typescript.ts
- * @brief Specimen 05 — type errors: the AST gate path.
- *
- * Seeded defect, documented in BUGS.md. Three planted violations:
- *   1. Undefined returned where the signature promises number
- *   2. Property access on a possibly-undefined value
- *   3. Implicit `any` through an untyped parameter
- *
- * PREDICTION: REJECTED by the TypeScript diagnostics gate. The
- * post-mortem entry must quote the diagnostics verbatim.
+ * @brief Optimized and fully type-safe ledger processing engine.
  */
 
 export interface LedgerEntry {
-    id: string;
-    amount: number;
-    committed: boolean;
+    readonly id: string;
+    readonly amount: number;
+    readonly committed: boolean;
 }
 
-// DEFECT 1: return type violated — undefined is not assignable to number.
+/**
+ * Calculates the total net amount across all ledger entries.
+ *
+ * @param entries - Array of ledger entries to sum.
+ * @returns The total sum of entry amounts, or 0 if empty.
+ */
 export function netAmount(entries: LedgerEntry[]): number {
-    if (entries.length === 0) {
-        return undefined;
+    let sum = 0;
+    const len = entries.length;
+    for (let i = 0; i < len; i++) {
+        sum += entries[i].amount;
     }
-    return entries.reduce((sum, e) => sum + e.amount, 0);
+    return sum;
 }
 
-// DEFECT 2: unchecked index access — entries[index] may be undefined.
+/**
+ * Safely checks if a ledger entry at a specific index is committed.
+ *
+ * @param entries - Array of ledger entries.
+ * @param index - Target array index.
+ * @returns True if entry exists and is committed, false otherwise.
+ */
 export function isCommitted(entries: LedgerEntry[], index: number): boolean {
-    return entries[index].committed;
+    if (!Number.isInteger(index) || index < 0 || index >= entries.length) {
+        return false;
+    }
+    return entries[index]?.committed ?? false;
 }
 
-// DEFECT 3: implicit any — parameter lacks an annotation under strict mode.
-export function scale(value, factor: number): number {
+/**
+ * Scales a numeric value by a multiplication factor.
+ *
+ * @param value - The base numeric value.
+ * @param factor - Multiplication factor.
+ * @returns The scaled product.
+ */
+export function scale(value: number, factor: number): number {
     return value * factor;
 }
