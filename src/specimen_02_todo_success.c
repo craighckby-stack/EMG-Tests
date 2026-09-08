@@ -28,7 +28,7 @@ typedef struct {
  * @param target Pointer to the write-protect target structure.
  * @return wp_status_t WP_SUCCESS upon successful execution, or an appropriate error code.
  */
-wp_status_t wp_set_permanent(const wp_target_t *target)
+wp_status_t wp_set_permanent(const wp_target_t *const target)
 {
     if (target == NULL) {
         return WP_ERR_INVALID_STATE;
