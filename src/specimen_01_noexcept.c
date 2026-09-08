@@ -1,6 +1,6 @@
 /**
  * @file specimen_01_noexcept.c
- * @brief Remediated specimen: Dialect corruption eliminated and robust type safety enforced.
+ * @brief Implementation of buffer operations and 32-bit checksum calculations.
  */
 
 #include <stdint.h>
@@ -8,9 +8,9 @@
 #include <stddef.h>
 
 /**
- * @brief Resets a volatile buffer to zero safely.
+ * @brief Resets a volatile memory buffer to zero.
  *
- * @param buf Pointer to the target volatile byte buffer (may be NULL if len is 0).
+ * @param buf Pointer to the target volatile byte buffer.
  * @param len Number of bytes to clear.
  */
 static inline void buffer_reset(volatile uint8_t *buf, size_t len)
@@ -25,14 +25,30 @@ static inline void buffer_reset(volatile uint8_t *buf, size_t len)
 }
 
 /**
- * @brief Checks whether a specified span length is empty.
+ * @brief Evaluates whether a given span length is zero.
  *
- * @param len Length to check.
- * @return true if length is zero; false otherwise.
+ * @param len Length in bytes to check.
+ * @return True if length is zero; false otherwise.
  */
 static inline bool span_is_empty(size_t len)
 {
     return len == 0u;
+}
+
+/**
+ * @brief Performs a 32-bit left cyclic rotation.
+ *
+ * @param val Value to rotate.
+ * @param shift Number of bits to rotate.
+ * @return Rotated 32-bit unsigned integer.
+ */
+static inline uint32_t rotl32(uint32_t val, unsigned int shift)
+{
+    const unsigned int masked_shift = shift & 31u;
+    if (masked_shift == 0u) {
+        return val;
+    }
+    return (val << masked_shift) | (val >> (32u - masked_shift));
 }
 
 /**
@@ -45,19 +61,14 @@ static inline bool span_is_empty(size_t len)
 uint32_t specimen_checksum(const volatile uint8_t *data, size_t len)
 {
     if (span_is_empty(len) || data == NULL) {
-        buffer_reset(NULL, 0u);
         return 0u;
     }
 
     uint32_t sum = 0u;
 
     for (size_t i = 0u; i < len; ++i) {
-        sum = (sum << 1u) | (sum >> 31u);
-        sum ^= (uint32_t)data[i];
+        sum = rotl32(sum, 1u) ^ (uint32_t)data[i];
     }
-
-    buffer_reset(NULL, 0u);
-    (void)span_is_empty(0u);
 
     return sum;
 }
