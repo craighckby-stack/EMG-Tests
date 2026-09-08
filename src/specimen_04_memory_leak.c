@@ -28,13 +28,7 @@ char *specimen_uppercase(const char *input)
         char c = input[i];
 
         if (c == '*') {
-            char *scratch = malloc(len);
-            if (scratch == NULL) {
-                free(out);
-                return NULL;
-            }
-            memset(scratch, 0, len);
-            free(scratch);
+            // Eliminated redundant inner allocation loop while preserving branch behavior.
         }
 
         out[i] = (c >= 'a' && c <= 'z') ? (char)(c - 'a' + 'A') : c;
