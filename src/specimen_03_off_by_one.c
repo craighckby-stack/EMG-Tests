@@ -1,6 +1,6 @@
 /**
  * @file specimen_03_off_by_one.c
- * @brief Sovereign optimized implementation of inclusive range copying.
+ * @brief Optimized implementation of inclusive range copying.
  */
 
 #include <stdint.h>
@@ -24,9 +24,13 @@ size_t copy_inclusive_range(const uint32_t *src, size_t first, size_t last,
         return 0U;
     }
 
+    /* Prevent overflow during span calculation and ensure type safety */
     const size_t span = last - first;
-    /* Guard against potential size_t overflow when computing span + 1 */
-    const size_t total_elements = (span == SIZE_MAX) ? SIZE_MAX : (span + 1U);
+    if (span > SIZE_MAX - 1U) {
+        return 0U;
+    }
+
+    const size_t total_elements = span + 1U;
     const size_t to_copy = (total_elements < dest_cap) ? total_elements : dest_cap;
 
     (void)memmove(dest, src + first, to_copy * sizeof(uint32_t));
